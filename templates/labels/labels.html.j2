@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <title>Lully · Plano de etiquetas</title>
+  <link rel="stylesheet" href="labels.css">
+</head>
+<body>
+{%- for sheet in sheets %}
+  <section class="sheet">
+    {%- for item in sheet %}
+      {%- if item is none %}
+        <div class="label empty">
+          <span class="crop tl"></span><span class="crop tr"></span>
+          <span class="crop bl"></span><span class="crop br"></span>
+        </div>
+      {%- else %}
+        <div class="label">
+          <span class="crop tl"></span><span class="crop tr"></span>
+          <span class="crop bl"></span><span class="crop br"></span>
+
+          <div class="figurine left"><img src="icons/figurine.svg" alt=""></div>
+          <div class="figurine right"><img src="icons/figurine.svg" alt=""></div>
+
+          <div class="name">{{ item.name_fr }}</div>
+          <div class="description">{{ item.description_pt }}</div>
+
+          <div class="allergens">
+            {%- for slug in item.allergens %}
+              <img src="icons/{{ slug }}.svg" alt="{{ slug }}">
+            {%- endfor %}
+          </div>
+          <div class="price">{{ item.price_str }}</div>
+        </div>
+      {%- endif %}
+    {%- endfor %}
+  </section>
+{%- endfor %}
+</body>
+</html>

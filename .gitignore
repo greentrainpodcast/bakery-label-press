@@ -1,0 +1,18 @@
+# Build output
+dist/
+data/_release-input.csv
+
+# Python
+.venv*/
+__pycache__/
+*.pyc
+*.pyo
+
+# OAuth helper output (never commit)
+scripts/run-release-local.sh
+
+# Editor / OS noise
+.DS_Store
+.idea/
+.vscode/
+*.swp

@@ -1,0 +1,73 @@
+name: Build Lully labels
+
+# Security note: all user-controlled inputs (client_payload.* and inputs.*)
+# are passed to the build step via the `env:` block ONLY. They are never
+# interpolated into shell `run:` commands, so workflow injection is not
+# possible here.
+
+on:
+  # Triggered by the Apps Script "Generate labels" button via repository_dispatch.
+  repository_dispatch:
+    types: [generate-labels]
+  # Manual fallback for testing from the GitHub UI.
+  workflow_dispatch:
+    inputs:
+      sheet_id:
+        description: 'Google Sheet ID'
+        required: true
+        # default: '<your-sheet-id>'
+      tab:
+        description: 'Tab name to read'
+        required: true
+        default: 'real_data'
+      requested_by:
+        description: 'Requester email (for the audit log)'
+        required: false
+        default: 'manual-dispatch@github'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: scripts/requirements-labels.txt
+
+      - name: Install Python dependencies
+        run: pip install -r scripts/requirements-labels.txt
+
+      - name: Set up Chrome (for headless PDF rendering)
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      - name: Build labels
+        env:
+          REQUEST_ID:   ${{ github.event.client_payload.request_id   || github.run_id }}
+          SHEET_ID:     ${{ github.event.client_payload.sheet_id     || inputs.sheet_id }}
+          TAB:          ${{ github.event.client_payload.tab          || inputs.tab }}
+          REQUESTED_BY: ${{ github.event.client_payload.requested_by || inputs.requested_by }}
+          GOOGLE_OAUTH_CLIENT_ID:     ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+          GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+          GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
+          LULLY_DRIVE_FOLDER_ID:      ${{ secrets.LULLY_DRIVE_FOLDER_ID }}
+        run: python3 scripts/release-labels.py
+
+      - name: Upload artifacts (for debugging)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: labels-${{ github.run_id }}
+          path: |
+            dist/labels.html
+            dist/labels.pdf
+            data/_release-input.csv
+          if-no-files-found: ignore
+          retention-days: 7

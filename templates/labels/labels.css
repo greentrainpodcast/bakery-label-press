@@ -1,0 +1,183 @@
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..600;1,400..600&display=swap');
+
+/*
+  Lully · Plano de etiquetas — production layout.
+
+  All positioning constants reverse-engineered from
+  raw-requirements/Plano etiquetas (easy).pdf and validated against the
+  pixel-perfect single-cell reference at docs/labels-design-reference/.
+
+  Cell:        79.95 × 56.24 mm (NOT a fill-the-page 2×4 grid)
+  Page layout: A4 with margin top/bottom 27.04 mm, left 20.08 / right 20.67,
+               column gap 9.34 mm, row gap 5.99 mm (averaged — original is
+               irregular 6.18 / 5.51 / 6.18; the 0.04mm rounding is invisible)
+  Color:       #7B7676 sampled from the source PDF
+  Font:        Adobe Garamond Pro in the source — production approximates
+               with EB Garamond (~95% match). Drop licensed AGaramondPro.otf
+               into templates/labels/fonts/ and add an @font-face block at
+               the top of this file to upgrade to 100%.
+*/
+
+:root {
+  --label-grey:    #7B7676;
+  --crop-grey:     #B8B0A4;
+
+  --font-display: "Adobe Garamond Pro", "EB Garamond", "Garamond", Georgia, serif;
+  --font-body:    "Adobe Garamond Pro", "EB Garamond", "Garamond", Georgia, serif;
+
+  --cell-w: 79.95mm;
+  --cell-h: 56.24mm;
+
+  --crop-len: 4mm;
+  --crop-inset: 1mm;
+  --crop-thickness: 0.25mm;
+}
+
+@page {
+  size: A4 portrait;
+  margin: 0;
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #FFFFFF;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  color: var(--label-grey);
+  font-family: var(--font-body);
+}
+
+/* A4 sheet — 8 labels arranged in 2 cols × 4 rows with margins around the
+   grid. Padding is asymmetric (l vs r) to match the original PDF exactly. */
+.sheet {
+  width: 210mm;
+  height: 297mm;
+  padding: 27.04mm 20.67mm 27.04mm 20.08mm;
+  display: grid;
+  grid-template-columns: var(--cell-w) var(--cell-w);
+  grid-template-rows: repeat(4, var(--cell-h));
+  column-gap: 9.34mm;
+  row-gap: 5.99mm;
+  page-break-after: always;
+}
+.sheet:last-child { page-break-after: auto; }
+
+/* Single label cell — all children are absolutely positioned at exact mm
+   coordinates extracted from the source PDF. */
+.label {
+  position: relative;
+  width: var(--cell-w);
+  height: var(--cell-h);
+  overflow: visible;
+}
+.label.empty { /* keep grid shape but render nothing */ }
+.label.empty > * { display: none; }
+
+/* Crop marks — 4 L-shaped ticks per cell, 4mm long, 0.25mm thick, 1mm
+   inset from the cell corner. Match the original exactly. */
+.crop {
+  position: absolute;
+  width: var(--crop-len);
+  height: var(--crop-len);
+  pointer-events: none;
+}
+.crop.tl { top: var(--crop-inset);    left: var(--crop-inset);
+  border-top:    var(--crop-thickness) solid var(--crop-grey);
+  border-left:   var(--crop-thickness) solid var(--crop-grey); }
+.crop.tr { top: var(--crop-inset);    right: var(--crop-inset);
+  border-top:    var(--crop-thickness) solid var(--crop-grey);
+  border-right:  var(--crop-thickness) solid var(--crop-grey); }
+.crop.bl { bottom: var(--crop-inset); left: var(--crop-inset);
+  border-bottom: var(--crop-thickness) solid var(--crop-grey);
+  border-left:   var(--crop-thickness) solid var(--crop-grey); }
+.crop.br { bottom: var(--crop-inset); right: var(--crop-inset);
+  border-bottom: var(--crop-thickness) solid var(--crop-grey);
+  border-right:  var(--crop-thickness) solid var(--crop-grey); }
+
+/* Two figurines per label — top-left and top-right corners. PDF bbox:
+   left fig is at (5.30mm, 5.05mm) within cell, size 4.80×7.16mm. */
+.figurine {
+  position: absolute;
+  top: 5.05mm;
+  width: 4.80mm;
+  height: 7.16mm;
+}
+.figurine.left  { left:  5.30mm; }
+.figurine.right { right: 5.30mm; }
+.figurine img { width: 100%; height: 100%; display: block; }
+
+/* Title — Garamond Regular 14pt, all-caps, wide tracking, supports
+   Alt+Enter line breaks via white-space: pre-line.
+   PDF: line top 15.90mm, line-height 1.302 (=6.41mm gap). */
+.name {
+  position: absolute;
+  top: 15.90mm;
+  left: 0; right: 0;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 14pt;
+  font-weight: 400;
+  line-height: 1.302;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  white-space: pre-line;
+  text-indent: 0.26em;
+  margin: 0;
+}
+
+/* Description — Garamond Italic 13pt.
+   PDF: line top 29.39mm, line-height 1.030 (=4.71mm between lines). */
+.description {
+  position: absolute;
+  top: 29.39mm;
+  left: 0; right: 0;
+  text-align: center;
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 13pt;
+  line-height: 1.030;
+  white-space: pre-line;
+  margin: 0;
+}
+
+/* Allergens — first circle at (4.69mm, 41.61mm) within cell, each circle
+   5.97×5.97mm, zero spacing between them (touching edge-to-edge). */
+.allergens {
+  position: absolute;
+  left: 4.69mm;
+  top: 41.61mm;
+  display: flex;
+}
+.allergens img {
+  width: 5.97mm;
+  height: 5.97mm;
+  display: block;
+}
+
+/* Price — Garamond Italic 15pt, right-aligned at the cell foot.
+   PDF: line top 42.51mm, right inset 5.12mm. */
+.price {
+  position: absolute;
+  right: 5.12mm;
+  top: 42.51mm;
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 15pt;
+  line-height: 1.0;
+  white-space: nowrap;
+}
+
+/* Screen-only canvas styling */
+@media screen {
+  body {
+    background: #E5DFD0;
+    padding: 12mm;
+  }
+  .sheet {
+    background: #FFFFFF;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    margin: 0 auto 12mm;
+  }
+}

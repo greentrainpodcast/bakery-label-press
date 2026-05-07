@@ -1,0 +1,42 @@
+MIT License
+
+Copyright (c) 2026 The bakery-label-press contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+Note on shipped brand assets:
+
+The following files are not covered by this MIT license. They are property of
+Lully 1661 Boulangerie (Lisbon) and are shipped here with their permission as
+the working reference brand for this label-generator project:
+
+  - templates/labels/icons/figurine.svg
+  - docs/design-reference/icons/figurine.svg
+  - docs/design-reference/single-label.html
+  - docs/design-reference/single-label.pdf
+  - docs/design-reference/single-label-vector.svg
+  - docs/design-reference/comparison-original-vs-reproduction.png
+  - reference-pdf/Plano etiquetas (easy).pdf
+  - data/labels-sample.csv (product names and prices)
+
+If you fork this project for your own bakery, replace these files with your
+own brand assets. The pipeline code (everything else) is freely reusable
+under the MIT terms above.
