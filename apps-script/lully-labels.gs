@@ -122,14 +122,24 @@ function _setupSampleTab(ss) {
 
 function _setupRealDataTab(ss) {
   const sh = _ensureSheet(ss, TAB.realData);
+
+  // Guard: if A2 already contains a formula (e.g. =IMPORTRANGE pulling
+  // from a separate staff-editing sheet), don't touch the data area —
+  // overwriting it would clobber the cross-sheet link. Header row 1 is
+  // still allowed to be (re-)written below since the IMPORTRANGE setup
+  // documented in docs/usage.*.md keeps row 1 hard-coded.
+  const importedDataPresent = !!sh.getRange(2, 1).getFormula();
+
   // Don't clear if user data already exists — only seed when truly empty
   const hadHeader = sh.getRange(1, 1).getValue() === COLUMNS[0].key;
   _writeHeaderRow(sh);
-  if (!hadHeader && sh.getLastRow() < 2) {
+  if (!hadHeader && sh.getLastRow() < 2 && !importedDataPresent) {
     // First-time setup: seed with one example so the user sees the format
     sh.getRange(2, 1, 1, COLUMNS.length).setValues([SAMPLE_ROWS[0]]);
   }
-  _applyValidations(sh, 200);
+  if (!importedDataPresent) {
+    _applyValidations(sh, 200);
+  }
   _applyColumnWidths(sh);
   sh.getRange(1, 1, 1, COLUMNS.length)
     .setBackground('#1A1613').setFontColor('#FFFFFF').setFontWeight('bold');
