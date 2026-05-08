@@ -22,8 +22,10 @@
           <div class="figurine left"><img src="icons/figurine.svg" alt=""></div>
           <div class="figurine right"><img src="icons/figurine.svg" alt=""></div>
 
-          <div class="name">{{ item.name_fr }}</div>
-          <div class="description">{{ item.description_pt }}</div>
+          <div class="text-block">
+            <div class="name">{{ item.name_fr }}</div>
+            <div class="description">{{ item.description_pt }}</div>
+          </div>
 
           <div class="allergens">
             {%- for slug in item.allergens %}
