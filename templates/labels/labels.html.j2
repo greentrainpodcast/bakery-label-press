@@ -24,7 +24,7 @@
 
           <div class="text-block">
             <div class="name">{{ item.name_fr }}</div>
-            <div class="description">{{ item.description_pt }}</div>
+            <div class="description{% if item.desc_long %} long{% endif %}">{{ item.description_pt }}</div>
           </div>
 
           <div class="allergens">

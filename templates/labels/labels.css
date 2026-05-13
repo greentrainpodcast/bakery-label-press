@@ -172,6 +172,17 @@ html, body {
   white-space: pre-line;
 }
 
+/* `.long` — applied by build-labels.py when description has ≥3 explicit
+   lines (e.g. bread tags with "Farinhas 100% BIO" suffix). Shrinks to 11pt
+   with tighter leading + reduced top-margin so 3-line descriptions fit
+   inside the 29.4mm text-block budget without spilling into the allergen
+   strip at 41.61mm. 4-line cases still fit if the title is ≤2 lines. */
+.description.long {
+  margin-top: 2.0mm;
+  font-size: 11pt;
+  line-height: 1.0;
+}
+
 /* Allergens — first circle at (4.69mm, 41.61mm) within cell, each circle
    5.97×5.97mm, zero spacing between them (touching edge-to-edge). */
 .allergens {

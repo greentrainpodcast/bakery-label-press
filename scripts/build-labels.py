@@ -89,9 +89,15 @@ def _normalize(rows: list[dict]) -> list[dict]:
         if not name:
             print(f"  ⚠ row {i}: missing name_fr — skipped", file=sys.stderr)
             continue
+        desc = (r.get("description_pt") or "").strip()
+        # 3+ line descriptions overflow the 29.4mm text-block budget at the
+        # default 13pt size; flag them so the template can apply `.long` for
+        # a tighter render. See `.description.long` in labels.css.
+        desc_long = desc.count("\n") >= 2
         out.append({
             "name_fr": name,
-            "description_pt": (r.get("description_pt") or "").strip(),
+            "description_pt": desc,
+            "desc_long": desc_long,
             "allergens": [c for c in ALLERGEN_COLS if _truthy(r.get(c))],
             "price_str": _format_price(r.get("price", "")),
         })
